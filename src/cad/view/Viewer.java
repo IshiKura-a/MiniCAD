@@ -3,9 +3,15 @@ package cad.view;
 import java.util.ArrayList;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuKeyEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import cad.controller.*;
@@ -16,6 +22,7 @@ public class Viewer extends JFrame {
     private JPanel body;
     private JPanel canvus;
     private JPanel leftToolBar;
+    private String helpString;
 
     JButton lineButton;
     JButton rectButton;
@@ -32,6 +39,14 @@ public class Viewer extends JFrame {
         body.setLayout(new BorderLayout());
         leftToolBar = new JPanel();
         leftToolBar.setLayout(new GridLayout(5, 1));
+        File f = new File("./blob/Help.html");
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f))) {
+            helpString = new String(bis.readAllBytes());
+            helpString = helpString.replace('\n', '\0');
+        } catch (IOException ioe) {
+            System.out.println("Meet io exception.");
+            helpString = "";
+        }
 
         menus.add(new JMenu("File"));
         menus.add(new JMenu("Help"));
@@ -62,6 +77,11 @@ public class Viewer extends JFrame {
                     public void approveSelection() {
                         File savedFile = getSelectedFile();
 
+                        if (!savedFile.getName().matches("(.dat)$")) {
+                            savedFile = new File(savedFile.getAbsolutePath() + ".dat");
+                            setSelectedFile(savedFile);
+                        }
+
                         if (savedFile.exists()) {
                             int overwriteSelect = JOptionPane.showConfirmDialog(this,
                                     "<html><font size=3>文件" + savedFile.getName() + "已存在，是否覆盖?</font><html>", "是否覆盖?",
@@ -87,6 +107,16 @@ public class Viewer extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 System.exit(0);
+            }
+        });
+
+        JMenuItem docItem = new JMenuItem("Document");
+        menus.get(1).add(docItem);
+        docItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                JOptionPane.showConfirmDialog(null, (Object) helpString, "Help", JOptionPane.CLOSED_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
 

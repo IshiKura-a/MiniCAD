@@ -286,10 +286,11 @@ public class FiniteStateMachine {
             @Override
             public State execute(Event e, InputEvent ie) {
                 MouseEvent me = (MouseEvent) ie;
+                Coordinate click = new Coordinate(me.getX(), me.getY());
                 model.setSelectedItem(null);
                 model.setDragBeginCoordinate(null);
                 for (Shape s : model.getShapes()) {
-                    if (s.isChosen(new Coordinate(me.getX(), me.getY()))) {
+                    if (s.isChosen(click)) {
                         model.setSelectedItem(s);
                         Controller.raisePaintEvent();
                         return State.SHAPE_SELECTED;
@@ -331,7 +332,7 @@ public class FiniteStateMachine {
         txnMap.put(tmp, new Transaction(tmp, State.SHAPE_SELECTED) {
             @Override
             public State execute(Event e, InputEvent ie) {
-                model.getTopShape().setColor(Controller.getDefaultColor());
+                model.getSelectedItem().setColor(Controller.getDefaultColor());
                 Controller.raisePaintEvent();
                 return State.SHAPE_SELECTED;
             }
@@ -341,7 +342,7 @@ public class FiniteStateMachine {
         txnMap.put(tmp, new Transaction(tmp, State.SHAPE_SELECTED) {
             @Override
             public State execute(Event e, InputEvent ie) {
-                model.getTopShape().setColor(Controller.getDefaultColor());
+                model.getSelectedItem().setColor(Controller.getDefaultColor());
                 Controller.raisePaintEvent();
                 return State.SHAPE_SELECTED;
             }

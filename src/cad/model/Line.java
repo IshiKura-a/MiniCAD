@@ -30,7 +30,7 @@ public class Line extends Shape {
         Coordinate c = Coordinate.getSum(end, negDir);
         Coordinate d = Coordinate.getSum(end, negDir);
 
-        return Coordinate.sumTriangleArea(a, b, c, d, click) <= (thickness + 5) * Coordinate.getDistance(start, end);
+        return Coordinate.sumTriangleArea(a, b, c, d, click) <= (thickness + 10) * Coordinate.getDistance(start, end);
     }
 
     @Override
